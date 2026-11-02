@@ -1,0 +1,41 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093
+
+rule_files:
+
+scrape_configs:
+  - job_name: "prometheus"
+
+    static_configs:
+      - targets: ["localhost:9090"]
+        labels:
+          app: "prometheus"
+    scrape_native_histograms: true
+
+  - job_name: "docker"
+    static_configs:
+      - targets: ["docker.local:9323"]
+
+        labels:
+          app: "docker"
+
+  - job_name: "grafana"
+    static_configs:
+      - targets: ["grafana.local:3000"]
+
+        labels:
+          app: "grafana"
+
+  - job_name: "server_hardware"
+    static_configs:
+      - targets: ["proxmox.local:9100"]
+
+        labels:
+          app: "node-exporter"
