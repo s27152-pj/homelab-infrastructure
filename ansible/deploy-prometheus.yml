@@ -1,0 +1,18 @@
+---
+- name: Deploy Prometheus configuration
+  hosts: prometheus-lxc
+  tasks:
+    - name: Copy prometheus.yml and validate syntax before applying
+      ansible.builtin.copy:
+        src: ../prometheus/prometheus.yml
+        dest: /etc/prometheus/prometheus.yml
+        owner: root
+        group: root
+        mode: "0644"
+        validate: "/usr/bin/promtool check config %s"
+      notify: Restart Prometheus
+  handlers:
+    - name: Restart Prometheus
+      ansible.builtin.systemd:
+        name: prometheus
+        state: restarted

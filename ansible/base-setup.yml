@@ -1,0 +1,21 @@
+---
+- name: Basic dns and tools setup
+  hosts: all
+  become: false
+
+  tasks:
+    - name: 1. Make sure that the DNS server is set to 192.168.0.52
+      ansible.builtin.lineinfile:
+        path: /etc/resolv.conf
+        line: "nameserver 192.168.0.52"
+        insertbefore: BOF
+        state: present
+
+    - name: 2. Install curl, htop and vim
+      ansible.builtin.apt:
+        name:
+          - curl
+          - htop
+          - vim
+        state: present
+        update_cache: true
