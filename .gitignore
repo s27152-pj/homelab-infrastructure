@@ -1,0 +1,24 @@
+# Secrets & Credentials
+*secret*
+*.pem
+*.key
+pve.yml
+.env
+
+# Terraform (Etap 3)
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfvars
+*.tfvars.json
+
+# Ansible (Etap 2)
+*.retry
+.vault_pass
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
