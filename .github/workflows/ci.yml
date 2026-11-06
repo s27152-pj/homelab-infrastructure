@@ -15,14 +15,17 @@ jobs:
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v4
-      - name: Run promtool check config
-        run: promtool check config prometheus/prometheus.yml
+      - name: Run promtool check config via Docker
+        run: |
+          docker run --rm             -v "${{ github.workspace }}/prometheus:/prometheus:ro"             --entrypoint promtool             prom/prometheus:latest             check config /prometheus/prometheus.yml
   validate-terraform:
     name: 2. Validate Terraform Code
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v4
+      - name: Generate dummy SSH key for file() validation
+        run: ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ""
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
       - name: Terraform Init (offline mode)
