@@ -1,0 +1,48 @@
+---
+name: Homelab Infrastructure CI
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+jobs:
+  validate-prometheus:
+    name: 1. Validate Prometheus Config
+    runs-on: ubuntu-latest
+    container:
+      image: prom/prometheus:latest
+      options: --entrypoint ""
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+      - name: Run promtool check config
+        run: promtool check config prometheus/prometheus.yml
+  validate-terraform:
+    name: 2. Validate Terraform Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+      - name: Terraform Init (offline mode)
+        working-directory: ./terraform
+        run: terraform init -backend=false
+      - name: Terraform Validate
+        working-directory: ./terraform
+        run: terraform validate
+  validate-ansible:
+    name: 3. Validate Ansible Playbooks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+      - name: Install Ansible
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible
+      - name: Check syntax of Ansible Playbooks
+        working-directory: ./ansible
+        run: |
+          ansible-playbook -i inventory.ini base-setup.yml --syntax-check
+          ansible-playbook -i inventory.ini deploy-prometheus.yml --syntax-check
