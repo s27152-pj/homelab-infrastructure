@@ -46,3 +46,16 @@ jobs:
         run: |
           ansible-playbook -i inventory.ini base-setup.yml --syntax-check
           ansible-playbook -i inventory.ini deploy-prometheus.yml --syntax-check
+  deploy-homelab:
+    name: 4. Deploy to Homelab (Ansible CD)
+    needs: [validate-prometheus, validate-terraform, validate-ansible]
+    runs-on: self-hosted
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    env:
+      ANSIBLE_HOST_KEY_CHECKING: "False"
+    steps:
+      - name: Checkout latest code on Homelab Runner
+        uses: actions/checkout@v4
+      - name: Run Ansible Playbook to update Prometheus
+        working-directory: ./ansible
+        run: ansible-playbook -i inventory.ini deploy-prometheus.yml
