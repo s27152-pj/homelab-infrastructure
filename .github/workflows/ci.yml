@@ -9,9 +9,6 @@ jobs:
   validate-prometheus:
     name: 1. Validate Prometheus Config
     runs-on: ubuntu-latest
-    container:
-      image: prom/prometheus:latest
-      options: --entrypoint ""
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v4
